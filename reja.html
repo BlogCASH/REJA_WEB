@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kunlik Reja Tizimi (Yangi)</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: 260px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            width: 100%;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0.5rem;
+        }
+
+        nav button:hover {
+            background-color: #f1f5f9;
+            color: var(--primary);
+        }
+
+        nav button.active {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+
+        .user-profile {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        header {
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .date-display {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Planner Card */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Inputs & Forms */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"], textarea {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #16a34a;
+        }
+
+        /* Task List Styles */
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .task-item.completed {
+            background-color: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--success);
+        }
+
+        .task-text {
+            font-size: 0.95rem;
+            word-break: break-all;
+        }
+
+        .locked-badge {
+            font-size: 0.75rem;
+            background: #e2e8f0;
+            color: var(--text-muted);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow: auto; }
+            aside { width: 100%; padding: 1rem; flex-direction: row; justify-content: space-between; align-items: center; overflow-x: auto; }
+            nav { display: flex; gap: 10px; }
+            nav button { width: auto; margin: 0; white-space: nowrap; padding: 8px 12px; }
+            .logo { margin: 0; }
+            .user-profile { display: none; }
+            main { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside>
+        <div class="logo">
+            <i class="fa-solid fa-list-check"></i>
+            <span>RejaTizimi v2</span>
+        </div>
+        <nav>
+            <button class="nav-btn active" onclick="switchTab('planner')">
+                <i class="fa-solid fa-pen-to-square"></i> Reja Tuzish
+            </button>
+            <button class="nav-btn" onclick="switchTab('tracker')">
+                <i class="fa-solid fa-check-double"></i> Bajarish
+            </button>
+            <button class="nav-btn" onclick="switchTab('weekly')">
+                <i class="fa-solid fa-chart-pie"></i> Haftalik
+            </button>
+            <button class="nav-btn" onclick="switchTab('monthly')">
+                <i class="fa-solid fa-calendar-days"></i> Oylik
+            </button>
+            <button class="nav-btn" onclick="switchTab('yearly')">
+                <i class="fa-solid fa-chart-line"></i> Yillik
+            </button>
+        </nav>
+        <div class="user-profile">
+            <div class="avatar">MN</div>
+            <div>
+                <div style="font-weight: 600; font-size: 0.9rem;">Foydalanuvchi</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Pro Plan</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main>
+        <header>
+            <h1 id="page-title">Kunlik Reja Tuzish</h1>
+            <div class="date-display" id="current-date">Sanani yuklash...</div>
+        </header>
+
+        <!-- 1. PLANNER SECTION -->
+        <section id="planner" class="section active">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Ertaga qiladigan ishlarim</span>
+                    <span class="locked-badge" id="lock-status-indicator"><i class="fa-solid fa-lock-open"></i> Tahrirlash mumkin</span>
+                </div>
+                <p style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                    Bugun kechqurun kelib, ertaga qiladigan barcha ishlaringizni shu yerga yozib boring. Ertasi kuni soat 00:00 dan keyin bu ro‘yxat yopiladi va o‘zgartirib bo‘lmaydi.
+                </p>
+                
+                <div id="input-area" class="input-group">
+                    <input type="text" id="plan-input" placeholder="Masalan: ertaga soat 8:00 da turib gimnastika qilish...">
+                    <button class="btn btn-primary" onclick="addPlan()">
+                        <i class="fa-solid fa-plus"></i> Qo'shish
+                    </button>
+                </div>
+
+                <ul class="task-list" id="plan-list">
+                    <!-- Plans will appear here -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- 2. TRACKER SECTION -->
+        <section id="tracker" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Bugungi vazifalar (Bajarish kundaligi)</span>
+                    <span id="tracker-date-badge" style="font-size: 0.85rem; background: #e0f2fe; color: #0284c7; padding: 4px 8px; border-radius: 4px;"></span>
+                </div>
+                
+                <div id="no-plans-msg" style="display:none; text-align: center; padding: 2rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-clipboard-list" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                    <p> Bugun uchun saqlangan reja yo'q.</p>
+                </div>
+
+                <ul class="task-list" id="tracker-list">
+                    <!-- Tasks with checkboxes appear here -->
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Bugun o'rganim narsalarim</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="learning-input" placeholder="Masalan: Ingliz tilida 10 ta so'z yodladim...">
+                    <button class="btn btn-primary" onclick="addLearning()">
+                        <i class="fa-solid fa-book-open"></i> Qo'shish
+                    </button>
+                </div>
+                <ul class="task-list" id="learning-list">
+                    <!-- Learnings will appear here -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- 3. WEEKLY ANALYTICS -->
+        <section id="weekly" class="section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">O'tgan haftada bajarilgan</div>
+                    <div class="stat-value" id="weekly-done">0</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="weekly-bar"></div>
+                    </div>
+                    <div class="stat-label" style="margin-top: 5px;">Foiz: <span id="weekly-percent">0%</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Bajarilmagan</div>
+                    <div class="stat-value" style="color: var(--danger);" id="weekly-failed">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">O'rganilgan yangi narsalar</div>
+                    <div class="stat-value" style="color: var(--warning);" id="weekly-learned">0</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Haftalik tafsilotlar</span>
+                </div>
+                <div id="weekly-details" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Weekly breakdown -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. MONTHLY ANALYTICS -->
+        <section id="monthly" class="section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Oylik samaradorlik</div>
+                    <div class="stat-value" id="monthly-percent">0%</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="monthly-bar"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Jami vazifalar</div>
+                    <div class="stat-value" id="monthly-total">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">O'rganishlar soni</div>
+                    <div class="stat-value" id="monthly-learned">0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. YEARLY ANALYTICS -->
+        <section id="yearly" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Yillik Hisobot</span>
+                </div>
+                <div style="height: 300px; display: flex; align-items: flex-end; justify-content: space-around; padding: 20px; background: #f8fafc; border-radius: 8px;" id="yearly-chart">
+                    <!-- Simple CSS Chart bars will be injected here -->
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Yil davomida bajarganlarim</div>
+                    <div class="stat-value" id="yearly-total-done">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Yil davomida o'rganganlarim</div>
+                    <div class="stat-value" id="yearly-total-learned">0</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification Element -->
+    <div id="toast">Xabar</div>
+
+    <script>
+        // --- State Management ---
+        const DB_KEY = 'daily_planner_db_v2';
+        
+        let appData = {
+            tasks: [], // { id, text, date, status: 'pending'|'done', isLocked: boolean }
+            learnings: [] // { id, text, date }
+        };
+
+        function loadData() {
+            const stored = localStorage.getItem(DB_KEY);
+            if (stored) {
+                appData = JSON.parse(stored);
+            }
+            checkAndLockPlans(); // Check locks immediately on load
+        }
+
+        function saveData() {
+            localStorage.setItem(DB_KEY, JSON.stringify(appData));
+        }
+
+        // --- Date Helpers ---
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function getTodayString() {
+            const d = new Date();
+            return d.toISOString().split('T')[0]; // YYYY-MM-DD
+        }
+
+        function getTomorrowString() {
+            const d = new Date();
+            d.setDate(d.getDate() + 1);
+            return d.toISOString().split('T')[0];
+        }
+
+        function formatDate(dateStr) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('uz-UZ', options);
+        }
+
+        // --- Core Logic: Locking System ---
+        // If today >= date of the plan, lock it. 
+        // Since we plan for tomorrow, if 'tomorrow' becomes 'today', it must lock.
+        function checkAndLockPlans() {
+            const today = getTodayString();
+            let needsSave = false;
+
+            appData.tasks.forEach(task => {
+                // If the task date has passed or is today, and it's not locked yet
+                if (task.date <= today && !task.isLocked) {
+                    task.isLocked = true;
+                    needsSave = true;
+                }
+            });
+
+            if (needsSave) saveData();
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        // --- Navigation ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            const buttons = document.querySelectorAll('.nav-btn');
+            if(tabId === 'planner') buttons[0].classList.add('active');
+            if(tabId === 'tracker') buttons[1].classList.add('active');
+            if(tabId === 'weekly') buttons[2].classList.add('active');
+            if(tabId === 'monthly') buttons[3].classList.add('active');
+            if(tabId === 'yearly') buttons[4].classList.add('active');
+
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            const titles = {
+                'planner': 'Kunlik Reja Tuzish',
+                'tracker': 'Bugungi Kunda Bajarish',
+                'weekly': 'Haftalik Tahlil',
+                'monthly': 'Oylik Tahlil',
+                'yearly': 'Yillik Tahlil'
+            };
+            document.getElementById('page-title').innerText = titles[tabId];
+
+            // Refresh content based on tab
+            if (tabId === 'planner') renderPlanner();
+            if (tabId === 'tracker') renderTracker();
+            if (tabId === 'weekly') renderWeeklyStats();
+            if (tabId === 'monthly') renderMonthlyStats();
+            if (tabId === 'yearly') renderYearlyStats();
+        }
+
+        // --- Feature 1: Planner (Add multiple items for tomorrow) ---
+        function renderPlanner() {
+            const list = document.getElementById('plan-list');
+            list.innerHTML = '';
+            
+            const tomorrow = getTomorrowString();
+            const inputArea = document.getElementById('input-area');
+            const lockStatus = document.getElementById('lock-status-indicator');
+
+            // Check if there are any locked tasks for tomorrow
+            // Note: We lock when 'tomorrow' becomes 'today'. 
+            // So if we are planning for tomorrow (future), they are editable.
+            // If we opened the page on the next day, the lock check function handles it.
+            
+            // We want to show tasks planned for "tomorrow" relative to the current day.
+            // BUT: To allow the user to see what they planned yesterday for today (which is now locked),
+            // we should strictly show tasks where date == tomorrow.
+            
+            const tasksForTomorrow = appData.tasks.filter(t => t.date === tomorrow);
+            
+            // Are any of them locked? (Should only happen if user manipulated system clock or bug)
+            // However, logic implies: if we are here, tomorrow is > today. So they should NOT be locked yet.
+            // UNLESS the user opened the page after midnight.
+            
+            const isLocked = tasksForTomorrow.some(t => t.isLocked);
+
+            if (isLocked) {
+                inputArea.style.display = 'none';
+                lockStatus.innerHTML = '<i class="fa-solid fa-lock"></i> Yopiq (Tahrirlab bo\'lmaydi)';
+                lockStatus.style.color = 'var(--danger)';
+            } else {
+                inputArea.style.display = 'flex';
+                lockStatus.innerHTML = '<i class="fa-solid fa-lock-open"></i> Tahrirlash mumkin';
+                lockStatus.style.color = 'var(--success)';
+            }
+
+            tasksForTomorrow.forEach(task => {
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                li.innerHTML = `
+                    <span class="task-text">${task.text}</span>
+                    ${!isLocked ? 
+                        `<button class="btn" style="color: var(--danger); padding: 5px;" onclick="deletePendingTask('${task.id}')">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>` : ''}
+                `;
+                list.appendChild(li);
+            });
+
+            if (tasksForTomorrow.length === 0) {
+                list.innerHTML = '<li style="text-align:center; color:#999; padding:10px;">Hali vazifa qo\'shilmagan</li>';
+            }
+        }
+
+        function addPlan() {
+            const input = document.getElementById('plan-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const tomorrow = getTomorrowString();
+            
+            // Double check lock status (e.g. if user clicked add exactly at 00:00:01)
+            const existingLocked = appData.tasks.some(t => t.date === tomorrow && t.isLocked);
+            if (existingLocked) {
+                showToast("Kunning o'zgarib bo'ldi, tahrirlash yopiq!");
+                renderPlanner();
+                return;
+            }
+
+            appData.tasks.push({
+                id: generateId(),
+                text: text,
+                date: tomorrow,
+                status: 'pending',
+                isLocked: false
+            });
+
+            saveData();
+            input.value = '';
+            renderPlanner();
+        }
+
+        function deletePendingTask(id) {
+            const tomorrow = getTomorrowString();
+            const task = appData.tasks.find(t => t.id === id);
+            if (task && task.isLocked) {
+                showToast("O'chirib bo'lmaydi: Reja yopiq.");
+                return;
+            }
+            appData.tasks = appData.tasks.filter(t => t.id !== id);
+            saveData();
+            renderPlanner();
+        }
+
+        // --- Feature 2: Tracker (Today) ---
+        function renderTracker() {
+            const today = getTodayString();
+            document.getElementById('tracker-date-badge').innerText = formatDate(today);
+
+            const list = document.getElementById('tracker-list');
+            list.innerHTML = '';
+
+            const todayTasks = appData.tasks.filter(t => t.date === today);
+
+            if (todayTasks.length === 0) {
+                document.getElementById('no-plans-msg').style.display = 'block';
+            } else {
+                document.getElementById('no-plans-msg').style.display = 'none';
+                todayTasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.className = `task-item ${task.status === 'done' ? 'completed' : ''}`;
+                    const isChecked = task.status === 'done' ? 'checked' : '';
+
+                    li.innerHTML = `
+                        <div class="task-left">
+                            <input type="checkbox" class="task-checkbox" 
+                                ${isChecked} 
+                                onchange="toggleTaskStatus('${task.id}')">
+                            <span class="task-text">${task.text}</span>
+                        </div>
+                        <div>
+                            ${task.status === 'done' 
+                                ? '<span style="color:var(--success); font-size:0.8rem;"><i class="fa-solid fa-check"></i> Bajarildi</span>' 
+                                : '<span style="color:var(--text-muted); font-size:0.8rem;">Kutilmoqda</span>'}
+                        </div>
+                    `;
+                    list.appendChild(li);
+                });
+            }
+
+            // Learnings
+            const learnList = document.getElementById('learning-list');
+            learnList.innerHTML = '';
+            const todayLearnings = appData.learnings.filter(l => l.date === today);
+            todayLearnings.forEach(l => {
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                li.innerHTML = `
+                    <div class="task-left">
+                        <i class="fa-solid fa-lightbulb" style="color: var(--warning)"></i>
+                        <span class="task-text">${l.text}</span>
+                    </div>
+                    <button class="btn" style="color: var(--danger); padding: 5px;" onclick="deleteLearning('${l.id}')">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                `;
+                learnList.appendChild(li);
+            });
+        }
+
+        function toggleTaskStatus(id) {
+            const task = appData.tasks.find(t => t.id === id);
+            if (task) {
+                task.status = task.status === 'done' ? 'pending' : 'done';
+                saveData();
+                renderTracker();
+            }
+        }
+
+        function addLearning() {
+            const input = document.getElementById('learning-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            appData.learnings.push({
+                id: generateId(),
+                text: text,
+                date: getTodayString()
+            });
+
+            saveData();
+            input.value = '';
+            renderTracker();
+        }
+
+        function deleteLearning(id) {
+            appData.learnings = appData.learnings.filter(l => l.id !== id);
+            saveData();
+            renderTracker();
+        }
+
+        // --- Analytics Logic (Same as before) ---
+        function getWeekDates(dateStr) {
+            const curr = new Date(dateStr);
+            const day = curr.getDay(); 
+            const diff = curr.getDate() - day + (day == 0 ? -6 : 1); 
+            const monday = new Date(curr.setDate(diff));
+            const dates = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                dates.push(d.toISOString().split('T')[0]);
+            }
+            return dates;
+        }
+
+        function renderWeeklyStats() {
+            const today = getTodayString();
+            const weekDates = getWeekDates(today);
+            let done = 0, failed = 0, learned = 0;
+
+            weekDates.forEach(date => {
+                appData.tasks.filter(t => t.date === date).forEach(t => {
+                    if (t.status === 'done') done++;
+                    else failed++;
+                });
+                learned += appData.learnings.filter(l => l.date === date).length;
+            });
+
+            const total = done + failed;
+            const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+
+            document.getElementById('weekly-done').innerText = done;
+            document.getElementById('weekly-failed').innerText = failed;
+            document.getElementById('weekly-learned').innerText = learned;
+            document.getElementById('weekly-percent').innerText = percent + "%";
+            document.getElementById('weekly-bar').style.width = percent + "%";
+
+            const detailsDiv = document.getElementById('weekly-details');
+            detailsDiv.innerHTML = '';
+            weekDates.forEach(date => {
+                const dayTasks = appData.tasks.filter(t => t.date === date);
+                const dayLearn = appData.learnings.filter(l => l.date === date);
+                if (dayTasks.length > 0 || dayLearn.length > 0) {
+                    const row = document.createElement('div');
+                    row.style.padding = "10px 0";
+                    row.style.borderBottom = "1px solid #eee";
+                    row.innerHTML = `
+                        <div style="font-weight:600; font-size:0.9rem;">${formatDate(date)}</div>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">
+                            Vazifalar: ${dayTasks.filter(t=>t.status==='done').length}/${dayTasks.length} bajarildi.
+                            ${dayLearn.length > 0 ? ` | O'rganishlar: ${dayLearn.length}` : ''}
+                        </div>
+                    `;
+                    detailsDiv.appendChild(row);
+                }
+            });
+            if(detailsDiv.innerHTML === '') detailsDiv.innerHTML = '<p style="color:#999; text-align:center;">Bu hafta ma\'lumot yo\'q.</p>';
+        }
+
+        function renderMonthlyStats() {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            let done = 0, total = 0, learned = 0;
+
+            appData.tasks.forEach(t => {
+                const d = new Date(t.date);
+                if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+                    total++;
+                    if (t.status === 'done') done++;
+                }
+            });
+
+            appData.learnings.forEach(l => {
+                const d = new Date(l.date);
+                if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+                    learned++;
+                }
+            });
+
+            const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+            document.getElementById('monthly-total').innerText = total;
+            document.getElementById('monthly-learned').innerText = learned;
+            document.getElementById('monthly-percent').innerText = percent + "%";
+            document.getElementById('monthly-bar').style.width = percent + "%";
+        }
+
+        function renderYearlyStats() {
+            const year = new Date().getFullYear();
+            const monthlyData = new Array(12).fill(0).map(() => ({ done: 0, learned: 0 }));
+
+            appData.tasks.forEach(t => {
+                const d = new Date(t.date);
+                if (d.getFullYear() === year && t.status === 'done') {
+                    monthlyData[d.getMonth()].done++;
+                }
+            });
+
+            appData.learnings.forEach(l => {
+                const d = new Date(l.date);
+                if (d.getFullYear() === year) {
+                    monthlyData[d.getMonth()].learned++;
+                }
+            });
+
+            const chartContainer = document.getElementById('yearly-chart');
+            chartContainer.innerHTML = '';
+            const maxVal = Math.max(...monthlyData.map(m => Math.max(m.done, m.learned)), 1);
+            const months = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyun', 'Iyul', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'];
+
+            monthlyData.forEach((data, index) => {
+                const heightDone = (data.done / maxVal) * 100;
+                const heightLearn = (data.learned / maxVal) * 100;
+                const barGroup = document.createElement('div');
+                barGroup.style.display = 'flex';
+                barGroup.style.flexDirection = 'column';
+                barGroup.style.alignItems = 'center';
+                barGroup.style.justifyContent = 'flex-end';
+                barGroup.style.height = '100%';
+                barGroup.style.width = '7%';
+                barGroup.innerHTML = `
+                    <div style="width:100%; height:${heightDone}%; background:var(--primary); border-radius:4px 4px 0 0; min-height:2px;" title="Bajarilgan: ${data.done}"></div>
+                    <div style="width:100%; height:${heightLearn}%; background:var(--warning); border-radius:4px 4px 0 0; margin-top:2px; min-height:2px;" title="O'rganilgan: ${data.learned}"></div>
+                    <div style="font-size:0.7rem; margin-top:5px; color:#666;">${months[index]}</div>
+                `;
+                chartContainer.appendChild(barGroup);
+            });
+
+            const totalDone = monthlyData.reduce((acc, cur) => acc + cur.done, 0);
+            const totalLearned = monthlyData.reduce((acc, cur) => acc + cur.learned, 0);
+            document.getElementById('yearly-total-done').innerText = totalDone;
+            document.getElementById('yearly-total-learned').innerText = totalLearned;
+        }
+
+        window.onload = function() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').innerText = now.toLocaleDateString('uz-UZ', options);
+            loadData(); // Loads data AND checks locks
+            renderPlanner();
+        };
+    </script>
+</body>
+</html>
